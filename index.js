@@ -1,3 +1,29 @@
+const state = {
+	store: []
+};
+
+// SERVER FUNCTIONS
+
+function getStoreItems() {
+	return fetch("http://localhost:3000/store").then((resp) => resp.json());
+}
+
+//HELPER FUNCTIONS
+function isItemNew(product) {
+	const daysToConsider = 11;
+	const second = 1000;
+	const minute = second * 60;
+	const hour = minute * 60;
+	const day = hour * 24;
+
+	const msForTenDaysAgo = Date.now() - day * daysToConsider;
+	const msForProductDate = Date.parse(product.dateEntered);
+
+	return msForProductDate > msForTenDaysAgo;
+}
+
+//RENDER FUNCTIONS
+
 function renderHeader() {
 	const headerEl = document.createElement("header");
 
@@ -87,8 +113,80 @@ function renderHeader() {
 	document.body.append(headerEl);
 }
 
+function renderProductItem(product, productList) {
+	const productEl = document.createElement("li");
+	productEl.setAttribute("class", "product-item");
+
+	const imgEl = document.createElement("img");
+	imgEl.setAttribute("class", "product-item__image");
+	imgEl.setAttribute("src", product.image);
+	imgEl.setAttribute("alt", product.name);
+
+	const titleEl = document.createElement("h3");
+	titleEl.setAttribute("class", "product-item__title");
+	titleEl.textContent = product.name;
+
+	const priceEl = document.createElement("p");
+	priceEl.setAttribute("class", "product-item__price");
+
+	const fullPriceSpan = document.createElement("span");
+	fullPriceSpan.setAttribute("class", "product-item__full-price");
+	fullPriceSpan.textContent = `£${product.price}`;
+
+	priceEl.append(fullPriceSpan);
+
+	if (product.discountedPrice) {
+		fullPriceSpan.classList.add("discounted");
+
+		const discountSpan = document.createElement("span");
+		discountSpan.setAttribute("class", "product-item__discount");
+		discountSpan.textContent = `£${product.discountedPrice}`;
+		priceEl.append(discountSpan);
+	}
+
+	productEl.append(imgEl, titleEl, priceEl);
+
+	if (isItemNew(product)) {
+		const newEl = document.createElement("span");
+		newEl.setAttribute("class", "product-item__new");
+		newEl.textContent = "NEW!";
+		productEl.append(newEl);
+	}
+
+	productList.append(productEl);
+}
+
+function renderMain() {
+	const mainEl = document.createElement("main");
+
+	const h2El = document.createElement("h2");
+	h2El.textContent = "Home";
+	h2El.setAttribute("class", "main-title");
+
+	const productList = document.createElement("ul");
+	productList.setAttribute("class", "product-list");
+
+	for (const product of state.store) {
+		renderProductItem(product, productList);
+	}
+
+	mainEl.append(h2El, productList);
+
+	document.body.append(mainEl);
+}
+
 function render() {
 	document.body.innerHTML = "";
 	renderHeader();
+	renderMain();
 }
-render();
+
+function init() {
+	render();
+	getStoreItems().then(function (store) {
+		state.store = store;
+		render();
+	});
+}
+
+init();

@@ -13,6 +13,10 @@ body {
 
 header {
 	display: grid;
+	position: sticky;
+	top: 0;
+	background-color: rgba(255, 255, 255, 0.9);
+	z-index: 1;
 	grid-auto-flow: column;
 	align-items: center;
 	justify-content: space-between;
@@ -49,4 +53,54 @@ header {
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
+}
+
+.product-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	padding: 1rem;
+	gap: 1rem;
+
+	list-style: none;
+}
+
+.product-item {
+	position: relative;
+}
+
+.product-item__title {
+	color: #1c2e52;
+}
+
+.product-item__price {
+	font-weight: bold;
+	display: grid;
+	grid-auto-flow: column;
+	justify-content: start;
+	gap: 0.5rem;
+}
+
+.product-item__full-price.discounted {
+	text-decoration: line-through;
+	font-weight: 300;
+	opacity: 0.5;
+}
+
+.product-item__discount {
+	color: red;
+}
+
+.product-item__new {
+	position: absolute;
+	top: -1.4rem;
+	right: 0;
+
+	background-color: royalblue;
+	color: white;
+	padding: 0.2rem;
+
+	border-top-left-radius: 0.5rem;
+	border-top-right-radius: 0.5rem;
+
+	font-size: 0.8rem;
 }
