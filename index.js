@@ -174,12 +174,27 @@ function renderMain() {
 
 	document.body.append(mainEl);
 }
+function renderFooter() {
+	const footer = document.createElement("footer");
+	const footerTitle = document.createElement("h3");
+	footerTitle.className = "footer-title";
+	footerTitle.textContent = "Hollixton";
 
+	const footerCountry = document.createElement("div");
+	footerCountry.className = "footer-country";
+	footerCountry.textContent = "🇬🇧 United Kingdom";
+	footer.append(footerTitle, footerCountry);
+
+	document.body.append(footer);
+}
 function render() {
 	document.body.innerHTML = "";
 	renderHeader();
 	renderMain();
+	renderFooter();
 }
+
+//
 
 function init() {
 	render();

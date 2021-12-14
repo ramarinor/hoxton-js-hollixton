@@ -54,7 +54,9 @@ header {
 	border: none;
 	cursor: pointer;
 }
-
+.main-title {
+	padding: 1rem;
+}
 .product-list {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -103,4 +105,18 @@ header {
 	border-top-right-radius: 0.5rem;
 
 	font-size: 0.8rem;
+}
+
+footer {
+	display: grid;
+	grid-auto-flow: column;
+	justify-content: space-between;
+	padding: 1rem;
+	align-items: center;
+	background-color: #eeeeee;
+	color: #223457;
+}
+
+.footer-title {
+	text-transform: uppercase;
 }
