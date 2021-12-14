@@ -28,6 +28,10 @@ header {
 	padding: 1rem;
 }
 
+.header-left__link {
+	cursor: pointer;
+}
+
 .header-left__title {
 	text-transform: uppercase;
 }
@@ -44,4 +48,5 @@ header {
 	width: 1.5rem;
 	background-color: transparent;
 	border: none;
+	cursor: pointer;
 }
