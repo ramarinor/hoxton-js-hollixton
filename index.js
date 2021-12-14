@@ -44,26 +44,6 @@ function renderHeader() {
 	navEl.append(headerLeftList);
 	headerLeft.append(navEl);
 
-	// <div class="header-right">
-	// 	<ul class="header-right__list">
-	// 		<li class="header-right_list-item">
-	// 			<button class="header-right__button">
-	// 				<img src="search.svg" alt="search" />
-	// 			</button>
-	// 		</li>
-	// 		<li class="header-right__list-item">
-	// 			<button class="header-right__button">
-	// 				<img src="profile.svg" alt="profile" />
-	// 			</button>
-	// 		</li>
-	// 		<li class="header-right_list-item">
-	// 			<button class="header-right__button">
-	// 				<img src="bag.svg" alt="bag" />
-	// 			</button>
-	// 		</li>
-	// 	</ul>
-	// </div>;
-
 	const headerRight = document.createElement("div");
 	headerRight.className = "header-right";
 
