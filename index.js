@@ -1,7 +1,9 @@
 const state = {
 	store: [],
 	page: "Home",
-	selectedItem: null
+	selectedItem: null,
+	modal: "",
+	search: "test"
 };
 
 // SERVER FUNCTIONS
@@ -20,6 +22,10 @@ function getItemsToDisplay() {
 		itemsToDisplay = itemsToDisplay.filter((item) => item.type === "Guys");
 	} else if (state.page === "Sale") {
 		itemsToDisplay = itemsToDisplay.filter((item) => item.discountedPrice !== undefined);
+	}
+
+	if (state.search !== "") {
+		itemsToDisplay = itemsToDisplay.filter((item) => item.name.toLowerCase().includes(state.search.toLocaleLowerCase()));
 	}
 	return itemsToDisplay;
 }
@@ -62,6 +68,7 @@ function renderHeader() {
 	titleLiEl.append(titleLiLink);
 	titleLiLink.addEventListener("click", () => {
 		state.page = "Home";
+		state.selectedItem = null;
 		render();
 	});
 
@@ -73,6 +80,7 @@ function renderHeader() {
 	girlsLiEl.append(girlsLiLink);
 	girlsLiLink.addEventListener("click", () => {
 		state.page = "Girls";
+		state.selectedItem = null;
 		render();
 	});
 
@@ -84,6 +92,7 @@ function renderHeader() {
 	guysLiEl.append(guysLiLink);
 	guysLiLink.addEventListener("click", () => {
 		state.page = "Guys";
+		state.selectedItem = null;
 		render();
 	});
 
@@ -95,6 +104,7 @@ function renderHeader() {
 	saleLiEl.append(saleLiLink);
 	saleLiLink.addEventListener("click", () => {
 		state.page = "Sale";
+		state.selectedItem = null;
 		render();
 	});
 
@@ -117,6 +127,10 @@ function renderHeader() {
 	searchImg.alt = "search";
 	searchBtn.append(searchImg);
 	searchLiEl.append(searchBtn);
+	searchBtn.addEventListener("click", () => {
+		state.modal = "search";
+		render();
+	});
 
 	const profileLiEl = document.createElement("li");
 	profileLiEl.className = "header-right__list-item";
@@ -196,6 +210,26 @@ function renderProductList(mainEl) {
 	const h2El = document.createElement("h2");
 	h2El.textContent = state.page;
 	h2El.setAttribute("class", "main-title");
+	mainEl.append(h2El);
+	if (state.search !== "") {
+		const searchDiv = document.createElement("div");
+		searchDiv.className = "current-search";
+		const h4el = document.createElement("p");
+		h4el.textContent = `Current search: ${state.search}`;
+
+		const clearSearchBtn = document.createElement("button");
+		clearSearchBtn.className = "cta";
+		clearSearchBtn.textContent = "Clear";
+
+		clearSearchBtn.addEventListener("click", () => {
+			state.search = "";
+			render();
+		});
+
+		searchDiv.append(h4el, clearSearchBtn);
+
+		mainEl.append(searchDiv);
+	}
 
 	const productList = document.createElement("ul");
 	productList.setAttribute("class", "product-list");
@@ -203,18 +237,10 @@ function renderProductList(mainEl) {
 		renderProductItem(product, productList);
 	}
 
-	mainEl.append(h2El, productList);
+	mainEl.append(productList);
 }
 
 function renderItemDetails(mainEl) {
-	// <section class="product-details">
-	// 	<img src="https://img.hollisterco.com/is/image/anf/KIC_324-1085-0123-100_prod1" />
-	// 	<div class="product-details__description">
-	// 		<h3>Crewneck T-shirt</h3>
-	// 		<button class="cta">Add to bag</button>
-	// 		<button class="cta">Go back to shop</button>
-	// 	</div>
-	// </section>;
 	const productDetails = document.createElement("section");
 	productDetails.className = "product-details";
 
@@ -272,11 +298,57 @@ function renderFooter() {
 
 	document.body.append(footer);
 }
+
+function renderSearchModal() {
+	const modalWrapper = document.createElement("section");
+	modalWrapper.className = "modal-wrapper";
+
+	const modal = document.createElement("form");
+	modal.className = "modal";
+
+	const h5el = document.createElement("h5");
+	h5el.textContent = "Search for your favourite items!";
+
+	const modalInput = document.createElement("input");
+	modalInput.className = "modal-input";
+	modalInput.type = "search";
+
+	const modalCloseBtn = document.createElement("button");
+	modalCloseBtn.className = "modal-close-btn";
+	modalCloseBtn.textContent = "x";
+	modalCloseBtn.type = "button";
+
+	modal.addEventListener("submit", (event) => {
+		event.preventDefault();
+		state.search = modalInput.value;
+		state.modal = "";
+		render();
+	});
+
+	modalCloseBtn.addEventListener("click", () => {
+		state.modal = "";
+		render();
+	});
+
+	modal.append(h5el, modalInput, modalCloseBtn);
+
+	modalWrapper.append(modal);
+
+	document.body.append(modalWrapper);
+}
+
+function renderModal() {
+	if (state.modal === "search") {
+		renderSearchModal();
+	}
+}
+
 function render() {
 	document.body.innerHTML = "";
 	renderHeader();
 	renderMain();
 	renderFooter();
+	renderModal();
 }
 
 //

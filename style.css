@@ -57,6 +57,15 @@ header {
 .main-title {
 	padding: 1rem;
 }
+
+.current-search {
+	padding: 1rem;
+	display: grid;
+	gap: 0.5rem;
+	grid-auto-flow: column;
+	justify-content: start;
+	align-items: center;
+}
 .product-list {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -133,8 +142,42 @@ footer {
 .cta {
 	background: linear-gradient(to right, #188baf, #0c6297);
 	color: white;
-	padding: 0.5rem;
+	padding: 0.25rem 0.5rem;
 	border: none;
 	border-radius: 1rem;
 	cursor: pointer;
+	font-size: 0.7rem;
+}
+
+.modal-wrapper {
+	top: 0;
+	z-index: 2;
+	position: fixed;
+	height: 100vh;
+	width: 100vw;
+	background-color: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(2px);
+	display: grid;
+	place-items: center;
+}
+
+.modal {
+	padding: 1rem;
+	background-color: white;
+	display: grid;
+	gap: 1rem;
+	justify-items: center;
+	position: relative;
+}
+
+.modal-close-btn {
+	position: absolute;
+	top: 0;
+	right: 0.25rem;
+	background-color: transparent;
+	border: none;
+}
+
+.modal-input {
+	border-radius: 0.5rem;
 }
