@@ -1,11 +1,26 @@
 const state = {
-	store: []
+	store: [],
+	page: "Home"
 };
 
 // SERVER FUNCTIONS
 
 function getStoreItems() {
 	return fetch("http://localhost:3000/store").then((resp) => resp.json());
+}
+
+//DERIVED STATE
+function getItemsToDisplay() {
+	let itemsToDisplay = state.store;
+
+	if (state.page === "Girls") {
+		itemsToDisplay = itemsToDisplay.filter((item) => item.type === "Girls");
+	} else if (state.page === "Guys") {
+		itemsToDisplay = itemsToDisplay.filter((item) => item.type === "Guys");
+	} else if (state.page === "Sale") {
+		itemsToDisplay = itemsToDisplay.filter((item) => item.discountedPrice !== undefined);
+	}
+	return itemsToDisplay;
 }
 
 //HELPER FUNCTIONS
@@ -44,27 +59,43 @@ function renderHeader() {
 	titleLih1.textContent = "Hollixton";
 	titleLiLink.append(titleLih1);
 	titleLiEl.append(titleLiLink);
+	titleLiLink.addEventListener("click", () => {
+		state.page = "Home";
+		render();
+	});
 
 	const girlsLiEl = document.createElement("li");
 	girlsLiEl.className = "header-left__list-item";
 	const girlsLiLink = document.createElement("a");
 	girlsLiLink.textContent = "Girls";
-	girlsLiEl.append(girlsLiLink);
-
 	girlsLiLink.className = "header-left__link";
+	girlsLiEl.append(girlsLiLink);
+	girlsLiLink.addEventListener("click", () => {
+		state.page = "Girls";
+		render();
+	});
+
 	const guysLiEl = document.createElement("li");
 	guysLiEl.className = "header-left__list-item";
 	const guysLiLink = document.createElement("a");
 	guysLiLink.textContent = "Guys";
-	guysLiEl.append(guysLiLink);
-
 	guysLiLink.className = "header-left__link";
+	guysLiEl.append(guysLiLink);
+	guysLiLink.addEventListener("click", () => {
+		state.page = "Guys";
+		render();
+	});
+
 	const saleLiEl = document.createElement("li");
 	saleLiEl.className = "header-left__list-item";
 	const saleLiLink = document.createElement("a");
-	saleLiLink.className = "header-left__link";
 	saleLiLink.textContent = "Sale";
+	saleLiLink.className = "header-left__link";
 	saleLiEl.append(saleLiLink);
+	saleLiLink.addEventListener("click", () => {
+		state.page = "Sale";
+		render();
+	});
 
 	headerLeftList.append(titleLiEl, girlsLiEl, guysLiEl, saleLiEl);
 	navEl.append(headerLeftList);
@@ -160,13 +191,12 @@ function renderMain() {
 	const mainEl = document.createElement("main");
 
 	const h2El = document.createElement("h2");
-	h2El.textContent = "Home";
+	h2El.textContent = state.page;
 	h2El.setAttribute("class", "main-title");
 
 	const productList = document.createElement("ul");
 	productList.setAttribute("class", "product-list");
-
-	for (const product of state.store) {
+	for (const product of getItemsToDisplay()) {
 		renderProductItem(product, productList);
 	}
 
