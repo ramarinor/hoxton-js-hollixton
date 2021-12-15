@@ -1,6 +1,7 @@
 const state = {
 	store: [],
-	page: "Home"
+	page: "Home",
+	selectedItem: null
 };
 
 // SERVER FUNCTIONS
@@ -147,6 +148,10 @@ function renderHeader() {
 function renderProductItem(product, productList) {
 	const productEl = document.createElement("li");
 	productEl.setAttribute("class", "product-item");
+	productEl.addEventListener("click", () => {
+		state.selectedItem = product;
+		render();
+	});
 
 	const imgEl = document.createElement("img");
 	imgEl.setAttribute("class", "product-item__image");
@@ -187,9 +192,7 @@ function renderProductItem(product, productList) {
 	productList.append(productEl);
 }
 
-function renderMain() {
-	const mainEl = document.createElement("main");
-
+function renderProductList(mainEl) {
 	const h2El = document.createElement("h2");
 	h2El.textContent = state.page;
 	h2El.setAttribute("class", "main-title");
@@ -201,6 +204,58 @@ function renderMain() {
 	}
 
 	mainEl.append(h2El, productList);
+}
+
+function renderItemDetails(mainEl) {
+	// <section class="product-details">
+	// 	<img src="https://img.hollisterco.com/is/image/anf/KIC_324-1085-0123-100_prod1" />
+	// 	<div class="product-details__description">
+	// 		<h3>Crewneck T-shirt</h3>
+	// 		<button class="cta">Add to bag</button>
+	// 		<button class="cta">Go back to shop</button>
+	// 	</div>
+	// </section>;
+	const productDetails = document.createElement("section");
+	productDetails.className = "product-details";
+
+	const imgEl = document.createElement("img");
+	imgEl.src = state.selectedItem.image;
+	imgEl.alt = state.selectedItem.name;
+
+	const productDetailsDescription = document.createElement("div");
+	productDetailsDescription.className = "product-details__description";
+
+	const h3El = document.createElement("h3");
+	h3El.textContent = state.selectedItem.name;
+
+	const addToBagBtn = document.createElement("button");
+	addToBagBtn.className = "cta";
+	addToBagBtn.textContent = "Add to bag";
+
+	const goBackBtn = document.createElement("button");
+	goBackBtn.className = "cta";
+	goBackBtn.textContent = "Go back to shop";
+
+	goBackBtn.addEventListener("click", () => {
+		state.selectedItem = null;
+		render();
+	});
+
+	productDetailsDescription.append(h3El, addToBagBtn, goBackBtn);
+
+	productDetails.append(imgEl, productDetailsDescription);
+
+	mainEl.append(productDetails);
+}
+
+function renderMain() {
+	const mainEl = document.createElement("main");
+
+	if (state.selectedItem === null) {
+		renderProductList(mainEl);
+	} else {
+		renderItemDetails(mainEl);
+	}
 
 	document.body.append(mainEl);
 }
