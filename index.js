@@ -20,13 +20,11 @@ function signIn(email, password) {
 		})
 		.then(function (user) {
 			if (user.password === password) {
-				// we know the user signed in successfully
 				alert("Welcome");
 				state.user = user;
 				state.modal = "";
 				render();
 			} else {
-				// we know the user failed to sign in
 				alert("Wrong email/password. Please try again.");
 			}
 		});
