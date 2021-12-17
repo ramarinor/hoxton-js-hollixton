@@ -3,13 +3,33 @@ const state = {
 	page: "Home",
 	selectedItem: null,
 	modal: "",
-	search: "test"
+	search: "",
+	user: null
 };
 
 // SERVER FUNCTIONS
 
 function getStoreItems() {
 	return fetch("http://localhost:3000/store").then((resp) => resp.json());
+}
+
+function signIn(email, password) {
+	return fetch(`http://localhost:3000/users/${email}`)
+		.then(function (resp) {
+			return resp.json();
+		})
+		.then(function (user) {
+			if (user.password === password) {
+				// we know the user signed in successfully
+				alert("Welcome");
+				state.user = user;
+				state.modal = "";
+				render();
+			} else {
+				// we know the user failed to sign in
+				alert("Wrong email/password. Please try again.");
+			}
+		});
 }
 
 //DERIVED STATE
@@ -142,6 +162,16 @@ function renderHeader() {
 	profileBtn.append(profileImg);
 	profileLiEl.append(profileBtn);
 
+	profileBtn.addEventListener("click", () => {
+		if (state.user === null) {
+			state.modal = "signIn";
+			render();
+		} else {
+			state.modal = "signOut";
+			render();
+		}
+	});
+
 	const bagLiEl = document.createElement("li");
 	bagLiEl.className = "header-right__list-item";
 	const bagBtn = document.createElement("button");
@@ -152,6 +182,13 @@ function renderHeader() {
 	bagBtn.append(bagImg);
 	bagLiEl.append(bagBtn);
 	headerRightList.append(searchLiEl, profileLiEl, bagLiEl);
+
+	bagBtn.addEventListener("click", () => {
+		if (state.user === null) {
+			state.modal = "signIn";
+			render();
+		}
+	});
 
 	headerRight.append(headerRightList);
 
@@ -258,6 +295,13 @@ function renderItemDetails(mainEl) {
 	addToBagBtn.className = "cta";
 	addToBagBtn.textContent = "Add to bag";
 
+	addToBagBtn.addEventListener("click", () => {
+		if (state.user === null) {
+			state.modal = "signIn";
+			render();
+		}
+	});
+
 	const goBackBtn = document.createElement("button");
 	goBackBtn.className = "cta";
 	goBackBtn.textContent = "Go back to shop";
@@ -306,12 +350,14 @@ function renderSearchModal() {
 	const modal = document.createElement("form");
 	modal.className = "modal";
 
-	const h5el = document.createElement("h5");
-	h5el.textContent = "Search for your favourite items!";
+	const labelEl = document.createElement("label");
+	labelEl.textContent = "Search for your favourite items!";
+	labelEl.setAttribute("for", "search");
 
 	const modalInput = document.createElement("input");
 	modalInput.className = "modal-input";
 	modalInput.type = "search";
+	modalInput.id = "search";
 
 	const modalCloseBtn = document.createElement("button");
 	modalCloseBtn.className = "modal-close-btn";
@@ -330,7 +376,89 @@ function renderSearchModal() {
 		render();
 	});
 
-	modal.append(h5el, modalInput, modalCloseBtn);
+	modal.append(labelEl, modalInput, modalCloseBtn);
+
+	modalWrapper.append(modal);
+
+	document.body.append(modalWrapper);
+}
+
+function renderSignInModal() {
+	const modalWrapper = document.createElement("section");
+	modalWrapper.className = "modal-wrapper";
+
+	const modal = document.createElement("form");
+	modal.className = "modal";
+
+	const emailLabel = document.createElement("label");
+	emailLabel.textContent = "Email";
+	emailLabel.setAttribute("for", "email");
+
+	const emailInput = document.createElement("input");
+	emailInput.className = "modal-input";
+	emailInput.type = "email";
+	emailInput.id = "email";
+
+	const passwordLabel = document.createElement("label");
+	passwordLabel.textContent = "Password";
+	passwordLabel.setAttribute("for", "password");
+
+	const passwordInput = document.createElement("input");
+	passwordInput.className = "modal-input";
+	passwordInput.type = "password";
+	passwordInput.id = "password";
+
+	const signInBtn = document.createElement("button");
+	signInBtn.className = "cta";
+	signInBtn.textContent = "Sign In";
+	signInBtn.type = "submit";
+
+	const modalCloseBtn = document.createElement("button");
+	modalCloseBtn.className = "modal-close-btn";
+	modalCloseBtn.textContent = "x";
+	modalCloseBtn.type = "button";
+
+	modal.addEventListener("submit", (event) => {
+		event.preventDefault();
+		signIn(emailInput.value, passwordInput.value);
+	});
+
+	modalCloseBtn.addEventListener("click", () => {
+		state.modal = "";
+		render();
+	});
+
+	modal.append(emailLabel, emailInput, passwordLabel, passwordInput, signInBtn, modalCloseBtn);
+
+	modalWrapper.append(modal);
+
+	document.body.append(modalWrapper);
+}
+
+function renderSignOutModal() {
+	const modalWrapper = document.createElement("section");
+	modalWrapper.className = "modal-wrapper";
+
+	const modal = document.createElement("form");
+	modal.className = "modal";
+
+	const h5El = document.createElement("h5");
+	h5El.textContent = `Hello ${state.user.firstName}`;
+
+	const signOutBtn = document.createElement("button");
+	signOutBtn.className = "cta";
+	signOutBtn.textContent = "Sign Out";
+	signOutBtn.type = "submit";
+
+	modal.addEventListener("submit", (event) => {
+		event.preventDefault();
+		state.user = null;
+		state.modal = "";
+		alert("Successfully signed out");
+		render();
+	});
+
+	modal.append(h5El, signOutBtn);
 
 	modalWrapper.append(modal);
 
@@ -340,6 +468,12 @@ function renderSearchModal() {
 function renderModal() {
 	if (state.modal === "search") {
 		renderSearchModal();
+	}
+	if (state.modal === "signIn") {
+		renderSignInModal();
+	}
+	if (state.modal === "signOut") {
+		renderSignOutModal();
 	}
 }
 
